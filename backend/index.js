@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import mongoDBURL from "./config.js";
 import User from "./modules.js"; // Import the default export without curly braces
+import Chat from "../frontend/src/Chat.jsx";
 
 const app = express();
 const PORT = 5174;
@@ -46,9 +47,14 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/chat", (req, res) => {
-  console.log("chat revceived!");
-  res.status(200);
+app.get("/chat", (req, res) => {
+  console.log("get request received!!!");
+  res.status(200).json("received sucessfully (get)");
+});
+
+app.post("/chat", async (req, res) => {
+  const { chats } = req.body;
+  const addedChat = new res.status(200).json("recieved succesfully (post)");
 });
 
 app.listen(PORT, () => {

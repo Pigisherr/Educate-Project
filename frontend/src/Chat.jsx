@@ -1,36 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Chat = () => {
   const navigate = useNavigate();
-  const [chats, setChats] = useState({ chat: "" });
+  const [chats, setChats] = useState("");
+  const [chatHistory, setChatHistory] = useState([""]);
 
   const setValues = (e) => {
     const { value } = e.target;
-    setChats({ chat: value });
+    setChats(value);
   };
 
-  const handleSubmit = (e) => {
-    axios.post("http://localhost:5174/chat", chats);
+  useEffect(() => {
+    fetchChatHistory();
+  }, []);
+
+  const fetchChatHistory = async () => {
+    try {
+      const response = await axios.get("http://localhost:5174/chat");
+      setChatHistory([response.data]);
+    } catch (err) {
+      console.error("error in fetchChatHistory", err);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:5174/chat", { chats });
+      setChats("");
+      fetchChatHistory();
+    } catch (err) {
+      console.error("error fetching chat history", err);
+    }
   };
 
   return (
-    <div class="bg-green min-h-screen justify-between flex flex-col">
-      <div class="flex justify-between">
-        <h1 class="text-7xl ml-[4rem] mt-[2rem]">Educate</h1>
+    <div className="bg-green min-h-screen justify-between flex flex-col">
+      <div className="flex justify-between">
+        <h1 className="text-7xl ml-[4rem] mt-[2rem]">Educate</h1>
         <button
           onClick={() => navigate("/Menu")}
-          class="text-7xl mt-[1rem] mr-[2rem] bg-blue p-5 rounded-xl text-white"
+          className="text-7xl mt-[1rem] mr-[2rem] bg-blue p-5 rounded-xl text-white"
         >
           Sign Out
         </button>
       </div>
-      <div id="chatContainer"></div>
-      <div class="flex flex-row sticky bottom-0">
+      <div id="chatContainer">
+        {" "}
+        {chatHistory.map((chat, index) => (
+          <div key={index}>{chat}</div>
+        ))}
+      </div>
+      <div className="flex flex-row sticky bottom-0">
         <input
-          class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="message"
           type="text"
           placeholder="Enter your message"
@@ -39,7 +65,7 @@ const Chat = () => {
         />
         <button
           onClick={handleSubmit}
-          class="bg-blue text-white text-3xl p-[3rem] justify-center items-center flex"
+          className="bg-blue text-white text-3xl p-[3rem] justify-center items-center flex"
         >
           Send
         </button>

@@ -15,6 +15,20 @@ const SignUpSchema = new Schema({
   password: { type: String, required: true },
 });
 
-const User = mongoose.model("User", SignUpSchema);
+const chatSchema = new Schema({
+  chat: {
+    type: String,
+  },
+});
 
-export default User;
+const chatsSchema = new Schema({
+  chats: {
+    type: Array,
+  },
+});
+
+const User = mongoose.model("User", SignUpSchema);
+const Chat = mongoose.model("Chat", chatSchema);
+const Chats = mongoose.model("Chats", chatsSchema);
+
+export default { User, Chat, Chats };
